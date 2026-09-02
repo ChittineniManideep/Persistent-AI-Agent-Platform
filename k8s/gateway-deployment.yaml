@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaming-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: streaming-gateway
+  template:
+    metadata:
+      labels:
+        app: streaming-gateway
+    spec:
+      containers:
+        - name: streaming-gateway
+          image: registry.example.com/streaming-gateway:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BACKEND_URL
+              value: "http://agent-backend:8000"
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits: { cpu: "500m", memory: "512Mi" }
+          readinessProbe:
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaming-gateway
+spec:
+  selector:
+    app: streaming-gateway
+  ports:
+    - port: 8080
+      targetPort: 8080
+  # WebSocket connections are long-lived — sessionAffinity keeps a client
+  # pinned to the same gateway pod for the life of the connection, which
+  # matters because in-flight WS state isn't shared across pods
+  sessionAffinity: ClientIP

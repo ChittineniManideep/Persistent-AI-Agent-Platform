@@ -1,0 +1,21 @@
+# Horizontal Pod Autoscaler on the backend — agent workloads are bursty
+# (a batch of long-running plans can spike CPU), so scaling on CPU
+# utilization rather than running a fixed large replica count at all times
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agent-backend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-backend
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

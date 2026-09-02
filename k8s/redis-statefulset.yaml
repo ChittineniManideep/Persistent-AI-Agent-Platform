@@ -1,0 +1,46 @@
+# Redis as a StatefulSet, not a Deployment — the session store's data
+# (in-flight agent plans) needs stable storage identity across restarts,
+# which is exactly what a Deployment doesn't guarantee and a StatefulSet does
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: agent-redis
+spec:
+  serviceName: agent-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-redis
+  template:
+    metadata:
+      labels:
+        app: agent-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          args: ["--appendonly", "yes"]  # AOF persistence — session state must survive a pod restart
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-redis
+spec:
+  selector:
+    app: agent-redis
+  ports:
+    - port: 6379
+  clusterIP: None

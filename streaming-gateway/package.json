@@ -1,0 +1,14 @@
+{
+  "name": "agent-streaming-gateway",
+  "version": "1.0.0",
+  "description": "WebSocket streaming gateway between Next.js frontend and FastAPI agent backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_gateway.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0",
+    "eventsource": "^2.0.2"
+  }
+}
