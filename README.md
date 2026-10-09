@@ -1,9 +1,6 @@
 # Persistent AI Agent Platform
 ### A full-stack, production-shaped multi-step agent system — Next.js chat UI, Node.js streaming gateway, FastAPI/LangChain agent backend with session persistence and failure recovery, PyTorch reranker, and Kubernetes deployment
 
-## Why this project exists
-
-Built to close every named gap in an otherwise strong application for an AI Systems Full Stack Engineer role: frontend (React/Next.js), Kubernetes, PyTorch, Node.js, and — the actual core product requirement — a multi-step agent that plans, uses tools, persists state across sessions, and recovers from failure, not just a single-turn RAG chatbot.
 
 | Gap | Where it's addressed |
 |---|---|
